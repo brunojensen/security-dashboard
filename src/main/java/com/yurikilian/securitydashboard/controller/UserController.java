@@ -1,4 +1,4 @@
-package com.yurikilian.securitydashboard.user;
+package com.yurikilian.securitydashboard.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
