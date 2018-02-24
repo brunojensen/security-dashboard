@@ -1,6 +1,8 @@
 package com.yurikilian.securitydashboard.domain;
 
 import javax.persistence.Embeddable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Embeddable
 public class Credentials {
@@ -29,7 +31,8 @@ public class Credentials {
   }
 
   public void setPassword(String password) {
-    this.password = password;
+    PasswordEncoder encoder = new BCryptPasswordEncoder();
+    this.password = encoder.encode(password);
   }
 
 }

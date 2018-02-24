@@ -24,4 +24,8 @@ public class UserService {
     return repository.findOne(Example.of(example));
   }
 
+  public User create(User user) {
+    return repository.save(user);
+  }
+
 }

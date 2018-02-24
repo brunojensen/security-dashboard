@@ -2,33 +2,33 @@ package com.yurikilian.securitydashboard.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "user-id-generator")
+  @GenericGenerator(name = "user-id-generator",
+      strategy = "com.yurikilian.securitydashboard.core.snowflake.SnowflakeIdGenerator")
   private Long id;
 
-  @Deprecated
-  public User() {
-
-  }
-
-  public User(String name, Credentials credentials) {
-    super();
-    this.name = name;
-    this.credentials = credentials;
-  }
-
-  private String name;
-
+  private String firstName;
+  private String lastName;
 
   @JsonIgnore
   private Credentials credentials;
+
+  @Deprecated
+  public User() {}
+
+  public User(String firstName, String lastName, Credentials credentials) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.credentials = credentials;
+  }
 
   public Long getId() {
     return id;
@@ -38,12 +38,20 @@ public class User {
     this.id = id;
   }
 
-  public String getName() {
-    return name;
+  public String getFirstName() {
+    return firstName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public Credentials getCredentials() {
@@ -53,5 +61,7 @@ public class User {
   public void setCredentials(Credentials credentials) {
     this.credentials = credentials;
   }
+
+
 
 }
