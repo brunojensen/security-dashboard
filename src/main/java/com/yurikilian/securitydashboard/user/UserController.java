@@ -35,7 +35,7 @@ public class UserController {
   @GetMapping
   public ResponseEntity<Page<User>> list(@DTORequestParam(SearchUserDto.class) User user,
       Pageable pageable) {
-    return ResponseEntity.ok(service.findAll(null, pageable));
+    return ResponseEntity.ok(service.findAll(user, pageable));
   }
 
 

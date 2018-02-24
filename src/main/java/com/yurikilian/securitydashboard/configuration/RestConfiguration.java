@@ -10,7 +10,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yurikilian.securitydashboard.core.mapper.DTORequestRequestParamMethodProcessor;
+import com.yurikilian.securitydashboard.core.mapper.DTORequestParamHandlerResolver;
 import com.yurikilian.securitydashboard.core.mapper.DTORequestResponseBodyMethodProcessor;
 
 @Configuration
@@ -30,7 +30,7 @@ public class RestConfiguration extends WebMvcConfigurerAdapter {
     ObjectMapper objectMapper =
         Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext).build();
     argumentResolvers.add(new DTORequestResponseBodyMethodProcessor(objectMapper, entityManager));
-    argumentResolvers.add(new DTORequestRequestParamMethodProcessor(objectMapper));
+    argumentResolvers.add(new DTORequestParamHandlerResolver(objectMapper));
   }
 
   @Override
