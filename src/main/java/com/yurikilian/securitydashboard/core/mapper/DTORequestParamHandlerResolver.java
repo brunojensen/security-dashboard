@@ -42,7 +42,8 @@ public class DTORequestParamHandlerResolver implements HandlerMethodArgumentReso
     Class<?> classToConvert = parameter.getParameterAnnotation(DTORequestParam.class).value();
     Object dto = objectMapper.convertValue(map, classToConvert);
     return modelMapper.map(dto, parameter.getParameterType());
+    
+    //TODO some refactoring
   }
-
 
 }
