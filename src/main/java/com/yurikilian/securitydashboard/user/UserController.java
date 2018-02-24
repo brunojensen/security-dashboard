@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.yurikilian.securitydashboard.core.mapper.DTO;
+import com.yurikilian.securitydashboard.core.mapper.DTORequestBody;
 import com.yurikilian.securitydashboard.core.mapper.DTORequestParam;
 import com.yurikilian.securitydashboard.domain.User;
 import com.yurikilian.securitydashboard.model.CreateUserDto;
@@ -26,7 +26,7 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<User> create(@DTO(CreateUserDto.class) User user)
+  public ResponseEntity<User> create(@DTORequestBody(CreateUserDto.class) User user)
       throws URISyntaxException {
     User created = service.create(user);
     return ResponseEntity.created(new URI("user" + created.getId())).build();

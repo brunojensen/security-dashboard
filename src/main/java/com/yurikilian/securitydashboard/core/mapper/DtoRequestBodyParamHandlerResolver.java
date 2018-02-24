@@ -23,11 +23,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DTORequestResponseBodyMethodProcessor extends RequestResponseBodyMethodProcessor {
+public class DtoRequestBodyParamHandlerResolver extends RequestResponseBodyMethodProcessor {
   private static final ModelMapper modelMapper = new ModelMapper();
   private EntityManager entityManager;
 
-  public DTORequestResponseBodyMethodProcessor(ObjectMapper objectMapper,
+  public DtoRequestBodyParamHandlerResolver(ObjectMapper objectMapper,
       EntityManager entityManager) {
     super(Collections.singletonList(new MappingJackson2HttpMessageConverter(objectMapper)));
     this.entityManager = entityManager;
@@ -35,7 +35,7 @@ public class DTORequestResponseBodyMethodProcessor extends RequestResponseBodyMe
 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
-    return parameter.hasParameterAnnotation(DTO.class);
+    return parameter.hasParameterAnnotation(DTORequestBody.class);
   }
 
   @Override
@@ -62,7 +62,7 @@ public class DTORequestResponseBodyMethodProcessor extends RequestResponseBodyMe
       MethodParameter parameter, Type targetType)
       throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
     for (Annotation ann : parameter.getParameterAnnotations()) {
-      DTO dtoType = AnnotationUtils.getAnnotation(ann, DTO.class);
+      DTORequestBody dtoType = AnnotationUtils.getAnnotation(ann, DTORequestBody.class);
       if (dtoType != null) {
         return super.readWithMessageConverters(inputMessage, parameter, dtoType.value());
       }
