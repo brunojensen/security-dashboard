@@ -23,11 +23,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DtoRequestBodyParamHandlerResolver extends RequestResponseBodyMethodProcessor {
+public class DTORequestBodyParamHandlerResolver extends RequestResponseBodyMethodProcessor {
   private static final ModelMapper modelMapper = new ModelMapper();
   private EntityManager entityManager;
 
-  public DtoRequestBodyParamHandlerResolver(ObjectMapper objectMapper,
+  public DTORequestBodyParamHandlerResolver(ObjectMapper objectMapper,
       EntityManager entityManager) {
     super(Collections.singletonList(new MappingJackson2HttpMessageConverter(objectMapper)));
     this.entityManager = entityManager;

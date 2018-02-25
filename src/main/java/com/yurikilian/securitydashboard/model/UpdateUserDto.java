@@ -1,18 +1,9 @@
 package com.yurikilian.securitydashboard.model;
 
-public class SearchUserDto {
+public class UpdateUserDto {
 
   private String firstName;
   private String lastName;
-
-  public SearchUserDto() {}
-
-  public SearchUserDto(String firstName, String lastName, String credentialsEmail,
-      String credentialsPassword) {
-    super();
-    this.firstName = firstName;
-    this.lastName = lastName;
-  }
 
   public String getFirstName() {
     return firstName;
@@ -29,4 +20,5 @@ public class SearchUserDto {
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
+
 }

@@ -1,9 +1,18 @@
 package com.yurikilian.securitydashboard.model;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class CreateUserDto {
+
+  @NotBlank(message = "First name cannot be empty")
   private String firstName;
+  @NotBlank(message = "Last name cannot be empty")
   private String lastName;
+
+  @NotBlank(message = "Email cannot be empty")
   private String credentialsEmail;
+
+  @NotBlank(message = "Password cannot be empty")
   private String credentialsPassword;
 
   public CreateUserDto() {}
