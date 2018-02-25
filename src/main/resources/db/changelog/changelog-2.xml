@@ -2,13 +2,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
 	<changeSet id="1" author="yurikilian">
 		<insert tableName="user">
 			<column name="first_name" value="Yuri" />
 			<column name="last_name" value="Kilian" />
-			<column name="email" value="kilian.inf@gmail.com" />
-			<column name="password"
-				value="$2a$04$t6CjOgRvq9tUHqFZT1jcUuA98J3mvqzJsefs2RAtzq7YeFJ4M6vji" />
+			<column name="email" value="${initialUsername}" />
+			<column name="password" value="${initialPassword}" />
 		</insert>
 	</changeSet>
 
