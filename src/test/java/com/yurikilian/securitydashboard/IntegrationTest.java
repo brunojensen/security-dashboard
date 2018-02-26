@@ -28,7 +28,7 @@ public class IntegrationTest {
   @Value("${liquibase.parameters.initialUsername}")
   private String username;
 
-  @Value("${application.initialPassword}")
+  @Value("${liquibase.parameters.initialPassword}")
   private String password;
 
   @Autowired

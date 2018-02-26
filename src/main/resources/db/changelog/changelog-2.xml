@@ -13,6 +13,17 @@
 	</changeSet>
 
 	<changeSet id="2" author="yurikilian">
+		<customChange
+			class="com.yurikilian.securitydashboard.core.database.BCryptPasswordChange">
+			<param name="table" value="user" />
+			<param name="column" value="password" />
+			<param name="value" value="${initialPassword}" />
+			<param name="whereColumn" value="email" />
+			<param name="whereValue" value="${initialUsername}" />
+		</customChange>
+	</changeSet>
+
+	<changeSet id="3" author="yurikilian">
 		<tagDatabase tag="1.1.0" />
 	</changeSet>
 </databaseChangeLog>
