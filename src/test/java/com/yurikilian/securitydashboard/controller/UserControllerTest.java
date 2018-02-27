@@ -14,8 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import com.yurikilian.securitydashboard.domain.Credentials;
 import com.yurikilian.securitydashboard.domain.User;
+import com.yurikilian.securitydashboard.model.CreateUserDto;
 import com.yurikilian.securitydashboard.util.Authorization;
 
 @RunWith(SpringRunner.class)
@@ -32,13 +32,11 @@ public class UserControllerTest {
   @Autowired
   private TestRestTemplate restTemplate;
 
-
-
   @Test
   public void shouldReturnBadRequestWhenNullUserCreate() {
     ResponseEntity<User> userResponse = restTemplate.postForEntity("/user",
         new HttpEntity<String>(Authorization.generateBasic(username, password)), User.class);
-    assertEquals(userResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
+    assertEquals(HttpStatus.BAD_REQUEST, userResponse.getStatusCode());
   }
 
   @Test
@@ -46,17 +44,18 @@ public class UserControllerTest {
     ResponseEntity<User> userResponse =
         restTemplate.postForEntity("/user", new HttpEntity<User>(new User("Yuri", null, null),
             Authorization.generateBasic(username, password)), User.class);
-    assertEquals(userResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
+    assertEquals(HttpStatus.BAD_REQUEST, userResponse.getStatusCode());
   }
 
   @Test
   public void shouldReturnBadRequestWhenExistentUserCreate() {
     HttpHeaders headers = Authorization.generateBasic(username, password);
     headers.add("Content-Type", "application/json");
-    User user = new User("Yuri", "Kilian", new Credentials(username, password));
-    HttpEntity<User> request = new HttpEntity<User>(user, headers);
+
+    HttpEntity<CreateUserDto> request = new HttpEntity<CreateUserDto>(
+        new CreateUserDto("Yuri", "Kilian", username, password), headers);
     ResponseEntity<User> userResponse = restTemplate.postForEntity("/user", request, User.class);
-    assertEquals(userResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
+    assertEquals(HttpStatus.BAD_REQUEST, userResponse.getStatusCode());
   }
 
 }

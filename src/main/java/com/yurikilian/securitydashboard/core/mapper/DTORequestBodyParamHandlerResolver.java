@@ -39,6 +39,11 @@ public class DTORequestBodyParamHandlerResolver extends RequestResponseBodyMetho
   }
 
   @Override
+  protected boolean checkRequired(MethodParameter parameter) {
+    return parameter.hasParameterAnnotation(DTORequestBody.class) && !parameter.isOptional();
+  }
+
+  @Override
   protected void validateIfApplicable(WebDataBinder binder, MethodParameter parameter) {
     binder.validate();
   }

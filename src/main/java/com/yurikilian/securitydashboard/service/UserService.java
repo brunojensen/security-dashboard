@@ -28,6 +28,10 @@ public class UserService {
   }
 
   public User create(User user) {
+    repository.findByCredentialsEmail(user.getCredentials().getEmail()).ifPresent(s -> {
+      throw new BussinessException("User already exists.");
+    });
+
     return repository.save(user);
   }
 
