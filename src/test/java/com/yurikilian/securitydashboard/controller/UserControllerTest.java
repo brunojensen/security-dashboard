@@ -33,14 +33,14 @@ public class UserControllerTest {
   private TestRestTemplate restTemplate;
 
   @Test
-  public void shouldReturnBadRequestWhenNullUserCreate() {
+  public void shouldReturnBadRequestWhenNullUserInformedOnCreate() {
     ResponseEntity<User> userResponse = restTemplate.postForEntity("/user",
         new HttpEntity<String>(Authorization.generateBasic(username, password)), User.class);
     assertEquals(HttpStatus.BAD_REQUEST, userResponse.getStatusCode());
   }
 
   @Test
-  public void shouldReturnBadRequestWhenInvalidUserCreate() {
+  public void shouldReturnBadRequestWhenInvalidUserInformedOnCreate() {
     ResponseEntity<User> userResponse =
         restTemplate.postForEntity("/user", new HttpEntity<User>(new User("Yuri", null, null),
             Authorization.generateBasic(username, password)), User.class);
@@ -48,7 +48,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void shouldReturnBadRequestWhenExistentUserCreate() {
+  public void shouldReturnBadRequestWhenUserExistsOnCreate() {
     HttpHeaders headers = Authorization.generateBasic(username, password);
     headers.add("Content-Type", "application/json");
 
