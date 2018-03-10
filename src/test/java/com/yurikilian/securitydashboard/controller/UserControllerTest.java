@@ -48,14 +48,13 @@ public class UserControllerTest {
   }
 
   @Test
-  public void shouldReturnBadRequestWhenUserExistsOnCreate() {
+  public void shouldReturnUnprocessableEntityForBussinesErrorWhenUserExistsOnCreate() {
     HttpHeaders headers = Authorization.generateBasic(username, password);
     headers.add("Content-Type", "application/json");
 
     HttpEntity<CreateUserDto> request = new HttpEntity<CreateUserDto>(
         new CreateUserDto("Yuri", "Kilian", username, password), headers);
     ResponseEntity<User> userResponse = restTemplate.postForEntity("/user", request, User.class);
-    assertEquals(HttpStatus.BAD_REQUEST, userResponse.getStatusCode());
+    assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, userResponse.getStatusCode());
   }
-
 }

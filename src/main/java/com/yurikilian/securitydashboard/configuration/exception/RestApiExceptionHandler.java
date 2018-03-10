@@ -1,14 +1,13 @@
 package com.yurikilian.securitydashboard.configuration.exception;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +25,20 @@ import com.yurikilian.securitydashboard.core.exception.BussinessException;
 
 
 @ControllerAdvice
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
   private static final Logger logger = LoggerFactory.getLogger(RestApiExceptionHandler.class);
 
+  @SuppressWarnings("serial")
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
     logger.info(ex.getClass().getName());
-    final ErrorDetails errorDetails =
-        new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), ex.getMessage());
+    final ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST,
+        ex.getLocalizedMessage(), new HashMap<String, String>() {
+          {
+            put("Not readable message", ex.getMessage());
+          }
+        });
     return new ResponseEntity<Object>(errorDetails, new HttpHeaders(), errorDetails.getStatus());
   }
 
@@ -44,90 +47,107 @@ public class RestApiExceptionHandler extends ResponseEntityExceptionHandler {
       final MethodArgumentNotValidException ex, final HttpHeaders headers, final HttpStatus status,
       final WebRequest request) {
     logger.info(ex.getClass().getName());
-    final List<String> errors = new ArrayList<String>();
+    final Map<String, String> errors = new HashMap<String, String>();
     for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-      errors.add(error.getDefaultMessage());
+      errors.put(error.getField(), error.getDefaultMessage());
     }
     for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-      errors.add(error.getDefaultMessage());
+      errors.put(error.getObjectName(), error.getDefaultMessage());
     }
-    errors.sort((String e1, String e2) -> e1.compareTo(e2));
-    final ErrorDetails erroDetalhado =
+    final ErrorDetails errorDetails =
         new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return handleExceptionInternal(ex, erroDetalhado, headers, erroDetalhado.getStatus(), request);
+    return handleExceptionInternal(ex, errorDetails, headers, errorDetails.getStatus(), request);
   }
 
   @Override
   protected ResponseEntity<Object> handleBindException(final BindException ex,
       final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
     logger.info(ex.getClass().getName());
-    final List<String> errors = new ArrayList<String>();
+    final Map<String, String> errors = new HashMap<String, String>();
     for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
-      errors.add(error.getField() + ": " + error.getDefaultMessage());
+      errors.put(error.getField(), error.getDefaultMessage());
     }
     for (final ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-      errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
+      errors.put(error.getObjectName(), error.getDefaultMessage());
     }
-    final ErrorDetails erroDetalhado =
+    final ErrorDetails errorDetails =
         new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return handleExceptionInternal(ex, erroDetalhado, headers, erroDetalhado.getStatus(), request);
+    return handleExceptionInternal(ex, errorDetails, headers, errorDetails.getStatus(), request);
   }
 
+  @SuppressWarnings("serial")
   @Override
   protected ResponseEntity<Object> handleTypeMismatch(final TypeMismatchException ex,
       final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
     logger.info(ex.getClass().getName());
-    final String error = "o valor " + ex.getValue() + " da propriedade " + ex.getPropertyName()
-        + " deveria ser " + ex.getRequiredType();
-
-    final ErrorDetails erroDetalhado =
-        new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(erroDetalhado, new HttpHeaders(), erroDetalhado.getStatus());
+    final ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST,
+        ex.getLocalizedMessage(), new HashMap<String, String>() {
+          {
+            put(ex.getPropertyName(),
+                ex.getValue() + " value should be of type" + ex.getRequiredType());
+          }
+        });
+    return new ResponseEntity<Object>(errorDetails, new HttpHeaders(), errorDetails.getStatus());
   }
 
+  @SuppressWarnings("serial")
   @ExceptionHandler({BussinessException.class})
   public ResponseEntity<Object> handleBussinessException(final BussinessException ex,
       final WebRequest request) {
     logger.info(ex.getClass().getName());
 
-    final ErrorDetails erroDetalhado =
-        new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), ex.getMessage());
-    return new ResponseEntity<Object>(erroDetalhado, new HttpHeaders(), erroDetalhado.getStatus());
+    final ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNPROCESSABLE_ENTITY,
+        ex.getLocalizedMessage(), new HashMap<String, String>() {
+          {
+            put("Bussiness Error", "Should be " + ex.getMessage());
+          }
+        });
+    return new ResponseEntity<Object>(errorDetails, new HttpHeaders(), errorDetails.getStatus());
   }
 
+  @SuppressWarnings("serial")
   @ExceptionHandler({MethodArgumentTypeMismatchException.class})
   public ResponseEntity<Object> handleMethodArgumentTypeMismatch(
       final MethodArgumentTypeMismatchException ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
-    final String error = ex.getName() + " deveria ser do tipo " + ex.getRequiredType().getName();
 
-    final ErrorDetails erroDetalhado =
-        new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-    return new ResponseEntity<Object>(erroDetalhado, new HttpHeaders(), erroDetalhado.getStatus());
+    final ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST,
+        ex.getLocalizedMessage(), new HashMap<String, String>() {
+          {
+            put(ex.getName(), "Should be " + ex.getRequiredType().getName());
+          }
+        });
+    return new ResponseEntity<Object>(errorDetails, new HttpHeaders(), errorDetails.getStatus());
   }
+
+
 
   @ExceptionHandler({ConstraintViolationException.class})
   public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex,
       final WebRequest request) {
     logger.info(ex.getClass().getName());
-    final List<String> errors = new ArrayList<String>();
+    final HashMap<String, String> errors = new HashMap<String, String>();
     for (final ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-      errors.add(violation.getMessage());
+      errors.put(((PathImpl) violation.getPropertyPath()).getLeafNode().getName(),
+          violation.getMessage());
     }
-
-    final ErrorDetails erroDetalhado =
+    final ErrorDetails errroDetails =
         new ErrorDetails(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-    return new ResponseEntity<Object>(erroDetalhado, new HttpHeaders(), erroDetalhado.getStatus());
+    return new ResponseEntity<Object>(errroDetails, new HttpHeaders(), errroDetails.getStatus());
   }
 
 
+  @SuppressWarnings("serial")
   @ExceptionHandler({Exception.class})
   public ResponseEntity<Object> handleAll(final Exception ex, final WebRequest request) {
     logger.info(ex.getClass().getName());
-    logger.error("erro", ex);
-    final ErrorDetails erroDetalhado = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR,
-        ex.getLocalizedMessage(), "ocorreu um erro inesperado");
-    return new ResponseEntity<Object>(erroDetalhado, new HttpHeaders(), erroDetalhado.getStatus());
+    final ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR,
+        ex.getLocalizedMessage(), new HashMap<String, String>() {
+          {
+            put("Unexpected error", ex.getMessage());
+          }
+        });
+    return new ResponseEntity<Object>(errorDetails, new HttpHeaders(), errorDetails.getStatus());
   }
 
 }

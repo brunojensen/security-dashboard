@@ -34,14 +34,14 @@ public class IntegrationTest {
   private TestRestTemplate restTemplate;
 
   @Test
-  public void shouldReturn401WhenNoCredentialsInformed() {
+  public void shouldReturnUnauthorizesWhenNoCredentialsInformed() {
     ResponseEntity<RestResponsePage<User>> response = restTemplate.exchange("/user", HttpMethod.GET,
         null, new ParameterizedTypeReference<RestResponsePage<User>>() {});
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   @Test
-  public void shouldReturnPageWhenGetUser() {
+  public void shouldReturnSuccessWhenCredentialsPassed() {
     HttpEntity<String> request =
         new HttpEntity<String>(Authorization.generateBasic(this.username, this.password));
 
@@ -50,9 +50,6 @@ public class IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
-
   }
-
-
 
 }

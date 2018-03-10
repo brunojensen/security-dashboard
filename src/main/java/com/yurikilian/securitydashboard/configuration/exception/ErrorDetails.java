@@ -2,33 +2,26 @@ package com.yurikilian.securitydashboard.configuration.exception;
 
 
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 
 public class ErrorDetails {
 
   private HttpStatus status;
   private String message;
-  private List<String> errors;
+  private Map<String, String> errors;
 
   public ErrorDetails() {
     super();
   }
 
-  public ErrorDetails(final HttpStatus status, final String mensagem, final List<String> erros) {
+  public ErrorDetails(final HttpStatus status, final String mensagem, Map<String, String> erros) {
     super();
     this.status = status;
     this.message = mensagem;
     this.errors = erros;
   }
 
-  public ErrorDetails(final HttpStatus status, final String mensagem, final String erro) {
-    super();
-    this.status = status;
-    this.message = mensagem;
-    errors = Arrays.asList(erro);
-  }
 
   public HttpStatus getStatus() {
     return status;
@@ -38,20 +31,21 @@ public class ErrorDetails {
     this.status = status;
   }
 
-  public String getMensagem() {
+  public String getMessage() {
     return message;
   }
 
-  public void setMensagem(String mensagem) {
-    this.message = mensagem;
+  public void setMessage(String message) {
+    this.message = message;
   }
 
-  public List<String> getErros() {
+  public Map<String, String> getErrors() {
     return errors;
   }
 
-  public void setErros(List<String> erros) {
-    this.errors = erros;
+  public void setErrors(Map<String, String> errors) {
+    this.errors = errors;
   }
+
 
 }
